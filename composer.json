@@ -1,4 +1,19 @@
 {
+
+    "name": "j7mbo/silex-auth-skeleton",
+    "type": "library",
+    "description": "Simple Silex skeleton application with already integrated login form using mysql auth, config files, firewalls and routing.",
+    "keywords": ["silex","skeleton", "auth", "mysql"],
+    "homepage": "http://github.com/j7mbo/silex-auth-skeleton",
+    "license": "WTFPL (Do What The Fuck You Want To Public License)",
+    "authors": [
+        {
+            "name": "James Mallison",
+            "email": "me@j7mbo.co.uk",
+            "homepage": "http://j7mbo.co.uk",
+            "role": "Author, Developer"
+        }
+    ],
     "require": {
         "silex/silex": "1.1.*",
         "symfony/security": "2.3.*",
