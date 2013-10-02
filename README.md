@@ -18,6 +18,11 @@ You can **clone this repo** to get the code directly:
 
     $ git clone git://github.com/j7mbo/silex-auth-skeleton.git
 
+Once you have the code, you'll need to use **composer** to update your dependencies:
+
+    $ cd silex-auth-skeleton/
+    $ composer update
+
 You will need the following database table:
 
     +----------+------------------+------+-----+---------+----------------+
