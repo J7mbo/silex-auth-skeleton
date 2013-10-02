@@ -1,0 +1,19 @@
+security:
+  firewalls: 
+    login_path: 
+      pattern:   ^/login$
+      anonymous: true
+    default:
+      pattern:   ^/.*$
+      anonymous: true
+      form:
+        login_path: /login
+        check_path: /login_check
+      logout:
+        logout_path:        /logout
+        invalidate_session: false
+  heirarchy: 
+    - [ 'ROLE_ADMIN', 'ROLE_USER' ]
+  access_rules:
+    - [ '^/login$', 'IS_AUTHENTICATED_ANONYMOUSLY' ]
+    - [ '^/.+$', 'ROLE_USER' ]

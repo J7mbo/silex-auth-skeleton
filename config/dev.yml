@@ -1,0 +1,6 @@
+database:
+  driver:   pdo_mysql
+  dbhost:   localhost
+  dbname:   silexauth
+  user:     root
+  password: password

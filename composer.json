@@ -1,0 +1,19 @@
+{
+    "require": {
+        "silex/silex": "1.1.*",
+        "symfony/security": "2.3.*",
+        "symfony/yaml": "2.4.*@dev",
+        "twig/twig": ">=1.8,<2.0-dev",
+        "symfony/twig-bridge": "2.3.*",
+        "monolog/monolog": "1.6.*@dev",
+        "phpseclib/phpseclib": "0.3.*@dev",
+        "ircmaxell/password-compat": "dev-master",
+        "dflydev/doctrine-orm-service-provider": "1.0.*@dev",
+        "entea/silex-twig-simple-asset-extension": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "App": "src/"
+        }
+    }
+}

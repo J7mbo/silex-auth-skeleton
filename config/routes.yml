@@ -1,0 +1,7 @@
+routes:
+  home:
+    pattern:  /
+    defaults: { _controller: 'HomeController::indexAction' }
+  login:
+    pattern:  /login
+    defaults: { _controller: 'HomeController::loginAction' }

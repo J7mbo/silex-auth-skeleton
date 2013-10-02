@@ -1,0 +1,13 @@
+{% if is_granted('ROLE_USER') %}
+    <p>Welcome {{ app.security.token.user.username }}!</p>
+    <p><a href="{{ path('logout') }}">Log out</a></p>
+{% else %}
+    <form action="{{ path('login_check') }}" method="post">
+        <p><label for="username">Username: </label><input id="username" type="text" name="_username" value="{{ last_username }}"></p>
+        <p><label for="password">Password: </label><input id="password" type="password" name="_password"></p>
+        <p><input type="submit" value="Log in"></p>
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+    </form>
+{% endif %}

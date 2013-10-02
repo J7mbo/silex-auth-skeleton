@@ -1,0 +1,9 @@
+INDEX PAGE
+<br>
+
+{% if is_granted('ROLE_USER') %}
+    <p>Welcome {{ app.security.token.user.username }}!</p>
+    <a href="{{ path('logout') }}">Logout</a>
+{% else %}
+    <a href="{{ path('login') }}">Login</a>
+{% endif %}
