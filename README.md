@@ -52,7 +52,7 @@ SQL statement to **create the above database and table**:
 You'll also need a **test user**:
 
     mysql> INSERT INTO `users` (username, email, password, roles) VALUES (
-        'test', 'test@test.com', SHA1('password'), 'ROLE_USER'
+        'test', 'test@test.com', 'BFEQkknI/c+Nd7BaG7AaiyTfUFby/pkMHy3UsYqKqDcmvHoPRX/ame9TnVuOV2GrBH0JK9g4koW+CgTYI9mK+w==', 'ROLE_USER'
     );
 
 You'll also need a **host / vhost** to route everything through.
