@@ -45,9 +45,8 @@ SQL statement to **create the above database and table**:
         `password` varchar(255) NOT NULL DEFAULT '',
         `roles` varchar(255) NOT NULL DEFAULT '',
         PRIMARY KEY (`id`),
-        UNIQUE KEY `unique_username` (`username`),
         UNIQUE KEY `unique_email` (`email`)
-    ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 You'll also need a **test user**:
 
@@ -67,6 +66,9 @@ Run the following commands to create a **vhost file** for `silex-auth.local`.
 Copy / paste the following into your `silex-auth.local` file:
 
     <VirtualHost 127.0.0.1:80>
+        ServerName silex-auth.local
+        ServerAlias silex-auth.local
+    
         DocumentRoot "/home/james/Dev/github/silex-auth/web/"
         DirectoryIndex index.php
 
@@ -81,5 +83,9 @@ Now save it, enable the vhost, and restart apache so that everything loads prope
     $ ctrl + x, then y, then enter
     $ sudo a2ensite silex-auth.local
     $ sudo service apache2 restart
+
+Importantly, you also need a `.htaccess` file in the silx-auth root directory (not `/web`), containing:
+
+    FallbackResource /index.php
 
 You should now be able to point at `http://silex-auth.local` in your browser and see the home page. After clicking the login link, you should be able to login with either **"test" and "password"**, or **"test@test.com" and "password"**.
