@@ -1,2 +1,19 @@
-# dev or live
-environment: dev
+# Environment Settings (the name of the .yml file to load - should 'dev' or 'live')
+environment: "dev"
+
+# Auryn Dependency Injection Container Settings
+auryn:
+  # Objects to delay 'share' of until within the controller resolver (needed for Application and Request)
+  delay: ["request", "application"]
+  # Objects to define around the application
+  define:
+  # Objects to 'share' around the application
+  share:
+    # Share objects that are already registered to Silex within the Application object
+    - "twig"
+    - "db"
+  # Interfaces to 'alias' to concrete objects
+  alias:
+    "App\TestInjection\TestInterface": "App\TestInjection\TestClass"
+  # Classes to 'delegate' the request for instantiation/injection of (to factory methods for example)
+  delegate:

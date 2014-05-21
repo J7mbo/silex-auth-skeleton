@@ -5,17 +5,19 @@
  * bootstrapping and setting up. Should only need to be touched to add new
  * service providers and environmental settings.
  */
-
 namespace App;
 
-use Silex\Provider\UrlGeneratorServiceProvider;
-use Silex\Provider\SecurityServiceProvider;
-use Silex\Provider\DoctrineServiceProvider;
-use Silex\Provider\SessionServiceProvider;
-use \Twig_SimpleFunction as TwigFunction;
-use Entea\Twig\Extension\AssetExtension;
-use Silex\Provider\TwigServiceProvider;
-use App\User\UserProvider;
+use Symfony\Component\Security\Core\SecurityContext,
+    Silex\Provider\UrlGeneratorServiceProvider,
+    Silex\Provider\SecurityServiceProvider,
+    Silex\Provider\DoctrineServiceProvider,
+    Silex\Provider\SessionServiceProvider,
+    \Twig_SimpleFunction as TwigFunction,
+    Entea\Twig\Extension\AssetExtension,
+    Silex\Provider\TwigServiceProvider,
+    App\User\UserProvider,
+    Auryn\ReflectionPool,
+    Auryn\Provider;
 
 class Application extends \Silex\Application
 {
@@ -23,6 +25,11 @@ class Application extends \Silex\Application
      * @var string Configuration array from all yaml files from /config
      */
     private $config;
+
+    /**
+     * @var \Auryn\Provider Auryn DiC Provider / Injector
+     */
+    protected $provider;
     
     /**
      * Class constructor
@@ -38,6 +45,7 @@ class Application extends \Silex\Application
         $this->registerEnvironmentParams();
         $this->registerServiceProviders();
         $this->registerSecurityFirewalls();
+        $this->resolveAuryn();
         $this->registerRoutes();
     }
     
@@ -46,11 +54,13 @@ class Application extends \Silex\Application
      * 
      * If development environment, set xdebug to display all the things
      *
-     * @return void
+     * @throws \RuntimeException When invalid environment given
      */
     private function registerEnvironmentParams()
     {
-        switch ($this->config['environment'])
+        $environment = $this->config['environment'];
+
+        switch ($environment)
         {
             case "dev":
                 ini_set('display_errors', true);
@@ -63,6 +73,7 @@ class Application extends \Silex\Application
                 ini_set('display_errors', false);
             break;
             default:
+                throw new \RuntimeException(sprintf("Environment should be 'dev' or 'live', '%s' given", $environment));
             break;
         }
     }
@@ -71,8 +82,6 @@ class Application extends \Silex\Application
      * Register Silex service providers
      * 
      * Twig doesn't like is_granted(), so a custom twig function is added here
-     *
-     * @return void
      */
     private function registerServiceProviders()
     {
@@ -88,20 +97,22 @@ class Application extends \Silex\Application
             'twig.path'    => dirname(dirname(__DIR__)) . '/web/views',
             'twig.options' => array('debug' => (($this->config['environment'] === "dev") ? true : false))
         ));
-        
-        $app['twig']->addExtension(new AssetExtension($this));
-        $app['twig']->addFunction(new TwigFunction('is_granted', function($role) use ($app) {
-            return $app['security']->isGranted($role);
+
+        /** @var \Twig_Environment $twig */
+        $twig = $app['twig'];
+
+        $twig->addExtension(new AssetExtension($this));
+        $twig->addFunction(new TwigFunction('is_granted', function($role) use ($app) {
+            /** @var SecurityContext $security */
+            $security = $app['security'];
+            return $security->isGranted($role);
         }));
     }
     
     /**
      * Register firewalls from security.yml
      * 
-     * Uses a custom UserProvider so the user can have whatever fields they
-     * like in the db returned
-     * 
-     * @return void
+     * Uses a custom UserProvider so the user can have whatever fields they like in the db returned
      */
     private function registerSecurityFirewalls()
     {
@@ -119,14 +130,68 @@ class Application extends \Silex\Application
             'security.access_rules'   => $accessRules
         ));
     }
+
+    /**
+     * Resolves Auryn controller dependencies after everything else has been set up correctly
+     *
+     * @see <https://github.com/rdlowrey/Auryn>
+     */
+    public function resolveAuryn()
+    {
+        $app = $this;
+        $config = $this->config['auryn'];
+
+        $provider = new Provider(new ReflectionPool);
+
+        foreach ($config as $key => $values)
+        {
+            switch ($key)
+            {
+                case ($key === 'define'):
+                    if (!is_null($values))
+                    {
+                        array_walk($values, function($definition, $key) use ($provider) {
+                            $provider->define($key, $definition);
+                        });
+                    }
+                break;
+                case ($key === 'delegate'):
+                    if (!is_null($values))
+                    {
+                        array_walk($values, function($delegate, $object) use ($provider) {
+                            $provider->delegate($object, $delegate);
+                        });
+                    }
+                break;
+                case ($key === 'alias'):
+                    if (!is_null($values))
+                    {
+                        array_walk($values, function ($concrete, $interface) use ($provider) {
+                            $provider->alias($interface, $concrete);
+                        });
+                    }
+                break;
+                case ($key === 'share'):
+                    if (!is_null($values))
+                    {
+                        array_walk($values, function($share) use ($provider, $app) {
+                            $provider->share($app[$share]);
+                        });
+                    }
+                break;
+            }
+        }
+
+        $app['resolver'] = $app->share($app->extend('resolver', function ($resolver, $app) use ($provider, $config) {
+            return new AurynControllerResolver($resolver, $provider, $app, $app['request'], $config);
+        }));
+    }
     
     /**
      * Register routes from routes.yml
      *
      * If a method key is not provided with the route, it is defaulted to 'GET'
      * Possible permutations involve GET, POST and GET|POST
-     * 
-     * @return void
      */
     private function registerRoutes()
     {        

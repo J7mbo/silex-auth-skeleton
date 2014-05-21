@@ -8,6 +8,7 @@ Annoyed with having to figure out the best code and directory structure for a wo
 - Environment specific config file (dev/live), routes config file, firewall file
 - Login form using MySQL authentication (username *or* email) and a SHA1 password requirement
 - Twig set up and ready to go for your templates
+- Awesome autowiring DiC [Auryn](https://github.com/rdlowrey/Auryn) for auto object instantiation / wiring
 - Working firewall - currently, anonymous users can visit `/` and `/login`. Everything else is secured!
 - Code is in controllers, with requests routed to these automatically
 - Nicely laid out PSR compliant code

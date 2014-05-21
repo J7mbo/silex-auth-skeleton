@@ -1,7 +1,11 @@
+# To use the default pimple 'DiC', use Controller::Action. To use Auryn recursive autowiring DiC, use Controller:Action
 routes:
   home:
     pattern:  /
-    defaults: { _controller: 'HomeController::indexAction' }
+    defaults: { _controller: 'HomeController:indexAction' }
   login:
     pattern:  /login
-    defaults: { _controller: 'HomeController::loginAction' }
+    defaults: { _controller: 'HomeController:loginAction' }
+  test:
+    pattern:  /test
+    defaults: {_controller:  'TestController:indexAction' }

@@ -1,8 +1,7 @@
 {
-
     "name": "j7mbo/silex-auth-skeleton",
     "type": "library",
-    "description": "Simple Silex skeleton application with already integrated login form using mysql auth, config files, firewalls and routing.",
+    "description": "Silex skeleton with already integrated login, mysql auth (doctrine), firewalls, routing, config files and auryn DiC.",
     "keywords": ["silex","skeleton", "auth", "mysql"],
     "homepage": "http://github.com/j7mbo/silex-auth-skeleton",
     "license": "WTFPL (Do What The Fuck You Want To Public License)",
@@ -21,7 +20,7 @@
         "twig/twig": ">=1.8,<2.0-dev",
         "symfony/twig-bridge": "2.3.*",
         "monolog/monolog": "1.6.*@dev",
-        "phpseclib/phpseclib": "0.3.*@dev",
+        "rdlowrey/auryn": "dev-v1.0.0-dev",
         "ircmaxell/password-compat": "dev-master",
         "dflydev/doctrine-orm-service-provider": "1.0.*@dev",
         "entea/silex-twig-simple-asset-extension": "dev-master"

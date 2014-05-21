@@ -2,5 +2,5 @@ database:
   driver:   pdo_mysql
   dbhost:   localhost
   dbname:   silexauth
-  user:     root
+  user:     silex
   password: password
