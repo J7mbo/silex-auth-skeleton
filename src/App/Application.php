@@ -7,7 +7,8 @@
  */
 namespace App;
 
-use Symfony\Component\Security\Core\SecurityContext,
+use Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder,
+    Symfony\Component\Security\Core\SecurityContext,
     Silex\Provider\UrlGeneratorServiceProvider,
     Silex\Provider\SecurityServiceProvider,
     Silex\Provider\DoctrineServiceProvider,
@@ -113,6 +114,8 @@ class Application extends \Silex\Application
      * Register firewalls from security.yml
      * 
      * Uses a custom UserProvider so the user can have whatever fields they like in the db returned
+     *
+     * Also uses a custom encoder for security / authentication using the password_compat library
      */
     private function registerSecurityFirewalls()
     {
@@ -129,6 +132,11 @@ class Application extends \Silex\Application
             'security.role_hierarchy' => $heirarchy,
             'security.access_rules'   => $accessRules
         ));
+
+        $app = $this;
+        $app['security.encoder.digest'] = $app->share(function() {
+            return new BCryptPasswordEncoder(10);
+        });
     }
 
     /**

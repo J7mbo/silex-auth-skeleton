@@ -10,6 +10,7 @@ Annoyed with having to figure out the best code and directory structure for a wo
 - Twig set up and ready to go for your templates
 - Awesome autowiring DiC [Auryn](https://github.com/rdlowrey/Auryn) for auto object instantiation / wiring
 - Working firewall - currently, anonymous users can visit `/` and `/login`. Everything else is secured!
+- BCrypt password authentication via ircmaxell's [password_compat](https://github.com/ircmaxell/password_compat) library
 - Code is in controllers, with requests routed to these automatically
 - Nicely laid out PSR compliant code
 
@@ -66,7 +67,7 @@ Run the following commands to create a **vhost file** for `silex-auth.local`.
 
 Copy / paste the following into your `silex-auth.local` file:
 
-    <VirtualHost 127.0.0.1:80>
+    <VirtualHost *:80>
         ServerName silex-auth.local
         ServerAlias silex-auth.local
     

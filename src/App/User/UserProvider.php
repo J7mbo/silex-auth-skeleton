@@ -6,12 +6,11 @@
 
 namespace App\User;
 
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
-use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Doctrine\DBAL\Connection;
-use App\User\User;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException,
+    Symfony\Component\Security\Core\Exception\UnsupportedUserException,
+    Symfony\Component\Security\Core\User\UserProviderInterface,
+    Symfony\Component\Security\Core\User\UserInterface,
+    Doctrine\DBAL\Connection;
  
 class UserProvider implements UserProviderInterface
 {
