@@ -4,3 +4,4 @@ database:
   dbname:   silexauth
   user:     silex
   password: password
+  charset:  utf8

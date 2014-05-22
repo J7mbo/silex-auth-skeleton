@@ -7,8 +7,11 @@
  */
 namespace App;
 
-use Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder,
+use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider,
+    Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder,
     Symfony\Component\Security\Core\SecurityContext,
+    Doctrine\ORM\Mapping\Driver\AnnotationDriver,
+    Doctrine\Common\Annotations\AnnotationReader,
     Silex\Provider\UrlGeneratorServiceProvider,
     Silex\Provider\SecurityServiceProvider,
     Silex\Provider\DoctrineServiceProvider,
@@ -16,7 +19,8 @@ use Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder,
     \Twig_SimpleFunction as TwigFunction,
     Entea\Twig\Extension\AssetExtension,
     Silex\Provider\TwigServiceProvider,
-    App\User\UserProvider,
+    Doctrine\Common\Cache\ArrayCache,
+    Doctrine\Common\Cache\ApcCache,
     Auryn\ReflectionPool,
     Auryn\Provider;
 
@@ -91,6 +95,32 @@ class Application extends \Silex\Application
         $app->register(new DoctrineServiceProvider(), array(
             'db.options' => $this->config['database']
         ));
+
+        $app->register(new DoctrineOrmServiceProvider, array(
+            'orm.proxies_dir'           => dirname(dirname(__DIR__)) . '/cache/doctrine',
+            'orm.proxies_namespace'     => 'cache\doctrine',
+            'orm.cache'                 => !$app['debug'] && extension_loaded('apc') ? new ApcCache() : new ArrayCache(),
+            'orm.auto_generate_proxies' => true,
+            'orm.em.options' => array(
+                'mappings'  => array(
+                    array(
+                        'type'      => 'annotation',
+                        'path'      => dirname(__DIR__) .'/src/App/Model/Entity',
+                        'namespace' => 'App\Model\Entity'
+                    )
+                )
+            )
+        ));
+
+        /** @var \Doctrine\DBAL\Connection $orm */
+        $orm = $app['orm.em'];
+
+        /** @var \Doctrine\ORM\Configuration $ormConfig */
+        $ormConfig = $orm->getConfiguration();
+
+        $ormConfig->setMetadataDriverImpl(new AnnotationDriver(new AnnotationReader(), array(
+            dirname(__DIR__) . '/src/App/Model/Entity'
+        )));
         
         $app->register(new SessionServiceProvider());
         $app->register(new UrlGeneratorServiceProvider());
@@ -122,9 +152,11 @@ class Application extends \Silex\Application
         $firewalls   = $this->config['security']['firewalls'];
         $heirarchy   = $this->config['security']['heirarchy'];
         $accessRules = $this->config['security']['access_rules'];
-        
-        $firewalls['default']['users'] = $this->share(function($app) { 
-            return new UserProvider($app['db']);
+
+        $firewalls['default']['users'] = $this->share(function($app) {
+            /** @var \Doctrine\ORM\EntityManager $orm */
+            $orm = $app['orm.em'];
+            return $orm->getRepository('\App\Model\Entity\User');
         });
     
         $this->register(new SecurityServiceProvider(), array(
@@ -189,6 +221,16 @@ class Application extends \Silex\Application
                 break;
             }
         }
+
+        $repositoryFiles = glob(__DIR__ . "/Model/Repository/*Repository.php");
+
+        array_walk($repositoryFiles, function($file) use ($app, $provider) {
+            /** @var \Doctrine\ORM\EntityManager $orm */
+            $orm = $app['orm.em'];
+
+            $repositoryName = str_replace(array('Repository', '.php'), '', basename($file));
+            $provider->share($orm->getRepository(sprintf('\App\Model\Entity\%s', $repositoryName)));
+        });
 
         $app['resolver'] = $app->share($app->extend('resolver', function ($resolver, $app) use ($provider, $config) {
             return new AurynControllerResolver($resolver, $provider, $app, $app['request'], $config);

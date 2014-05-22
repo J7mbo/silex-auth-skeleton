@@ -11,6 +11,7 @@ Annoyed with having to figure out the best code and directory structure for a wo
 - Awesome autowiring DiC [Auryn](https://github.com/rdlowrey/Auryn) for auto object instantiation / wiring
 - Working firewall - currently, anonymous users can visit `/` and `/login`. Everything else is secured!
 - BCrypt password authentication via ircmaxell's [password_compat](https://github.com/ircmaxell/password_compat) library
+- Doctrine ORM Integration with Entity / Repositories / Command-Line (the awesome stuff that Symfony has)
 - Code is in controllers, with requests routed to these automatically
 - Nicely laid out PSR compliant code
 
@@ -53,7 +54,7 @@ SQL statement to **create the above database and table**:
 You'll also need a **test user**:
 
     mysql> INSERT INTO `users` (username, email, password, roles) VALUES (
-        'test', 'test@test.com', 'BFEQkknI/c+Nd7BaG7AaiyTfUFby/pkMHy3UsYqKqDcmvHoPRX/ame9TnVuOV2GrBH0JK9g4koW+CgTYI9mK+w==', 'ROLE_USER'
+        'test', 'test@test.com', '$2y$10$k5O1HnSI8N0ORJQnMnFpR.Z0.r7nx4Epk0a8J3d/sCdATF0BStBKe', 'ROLE_USER'
     );
 
 You'll also need a **host / vhost** to route everything through.
