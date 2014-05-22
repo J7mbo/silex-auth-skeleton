@@ -5,5 +5,6 @@ INDEX PAGE
     <p>Welcome {{ app.security.token.user.username }}!</p>
     <a href="{{ path('logout') }}">Logout</a>
 {% else %}
+    <p>You are not currently logged in</p>
     <a href="{{ path('login') }}">Login</a>
 {% endif %}
