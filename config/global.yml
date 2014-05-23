@@ -12,9 +12,11 @@ auryn:
     # Share objects that are already registered to Silex within the Application object
     - "twig"
     - "db"
+    - "orm.em"
     - "url_generator"
   # Interfaces to 'alias' to concrete objects
   alias:
     "App\TestInjection\TestInterface": "App\TestInjection\TestClass"
   # Classes to 'delegate' the request for instantiation/injection of (to factory methods for example)
   delegate:
+    "Doctrine\ORM\EntityManager": "Doctrine\ORM\EntityManager::create"

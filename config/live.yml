@@ -1,0 +1,7 @@
+database:
+  driver:
+  dbhost:
+  dbname:
+  user:
+  password:
+  charset:

@@ -68,10 +68,15 @@ class Application extends \Silex\Application
         switch ($environment)
         {
             case "dev":
-                ini_set('display_errors', true);
-                ini_set('xdebug.var_display_max_depth', 100);
-                ini_set('xdebug.var_display_max_children', 100);
-                ini_set('xdebug.var_display_max_data', 100);
+
+                if (extension_loaded('xdebug'))
+                {
+                    ini_set('display_errors', true);
+                    ini_set('xdebug.var_display_max_depth', 100);
+                    ini_set('xdebug.var_display_max_children', 100);
+                    ini_set('xdebug.var_display_max_data', 100);
+                }
+
                 $this['debug'] = true;
             break;
             case "live":
@@ -92,25 +97,25 @@ class Application extends \Silex\Application
     {
         $app = $this;
         
-        $app->register(new DoctrineServiceProvider(), array(
+        $app->register(new DoctrineServiceProvider(), [
             'db.options' => $this->config['database']
-        ));
+        ]);
 
-        $app->register(new DoctrineOrmServiceProvider, array(
+        $app->register(new DoctrineOrmServiceProvider, [
             'orm.proxies_dir'           => dirname(dirname(__DIR__)) . '/cache/doctrine',
             'orm.proxies_namespace'     => 'cache\doctrine',
             'orm.cache'                 => !$app['debug'] && extension_loaded('apc') ? new ApcCache() : new ArrayCache(),
             'orm.auto_generate_proxies' => true,
-            'orm.em.options' => array(
-                'mappings'  => array(
-                    array(
+            'orm.em.options' => [
+                'mappings'  => [
+                    [
                         'type'      => 'annotation',
-                        'path'      => dirname(__DIR__) .'/src/App/Model/Entity',
+                        'path'      => __DIR__ .'/Model/Entity',
                         'namespace' => 'App\Model\Entity'
-                    )
-                )
-            )
-        ));
+                    ]
+                ]
+            ]
+        ]);
 
         /** @var \Doctrine\DBAL\Connection $orm */
         $orm = $app['orm.em'];
@@ -118,16 +123,16 @@ class Application extends \Silex\Application
         /** @var \Doctrine\ORM\Configuration $ormConfig */
         $ormConfig = $orm->getConfiguration();
 
-        $ormConfig->setMetadataDriverImpl(new AnnotationDriver(new AnnotationReader(), array(
-            dirname(__DIR__) . '/src/App/Model/Entity'
-        )));
+        $ormConfig->setMetadataDriverImpl(new AnnotationDriver(new AnnotationReader(), [
+            __DIR__ . '/Model/Entity'
+        ]));
         
         $app->register(new SessionServiceProvider());
         $app->register(new UrlGeneratorServiceProvider());
-        $app->register(new TwigServiceProvider(), array(
+        $app->register(new TwigServiceProvider(), [
             'twig.path'    => dirname(dirname(__DIR__)) . '/web/views',
-            'twig.options' => array('debug' => (($this->config['environment'] === "dev") ? true : false))
-        ));
+            'twig.options' => ['debug' => (($this->config['environment'] === "dev") ? true : false)]
+        ]);
 
         /** @var \Twig_Environment $twig */
         $twig = $app['twig'];
@@ -159,11 +164,11 @@ class Application extends \Silex\Application
             return $orm->getRepository('\App\Model\Entity\User');
         });
     
-        $this->register(new SecurityServiceProvider(), array(
+        $this->register(new SecurityServiceProvider(), [
             'security.firewalls'      => $firewalls,
             'security.role_hierarchy' => $heirarchy,
             'security.access_rules'   => $accessRules
-        ));
+        ]);
 
         $app = $this;
         $app['security.encoder.digest'] = $app->share(function() {
@@ -228,7 +233,7 @@ class Application extends \Silex\Application
             /** @var \Doctrine\ORM\EntityManager $orm */
             $orm = $app['orm.em'];
 
-            $repositoryName = str_replace(array('Repository', '.php'), '', basename($file));
+            $repositoryName = str_replace(['Repository', '.php'], '', basename($file));
             $provider->share($orm->getRepository(sprintf('\App\Model\Entity\%s', $repositoryName)));
         });
 
