@@ -36,6 +36,7 @@ You will need the following database table:
     | email    | varchar(100)     | NO   | UNI | NULL    |                |
     | password | varchar(255)     | NO   |     |         |                |
     | roles    | varchar(255)     | NO   |     |         |                |
+    | is_active| tinyint(1)       | NO   |     | 0       |                |
     +----------+------------------+------+-----+---------+----------------+
 
 SQL statement to **create the above database and table**:
@@ -47,6 +48,7 @@ SQL statement to **create the above database and table**:
         `email` varchar(100) NOT NULL,
         `password` varchar(255) NOT NULL DEFAULT '',
         `roles` varchar(255) NOT NULL DEFAULT '',
+        `is_active` tinyint(1) NOT NULL,
         PRIMARY KEY (`id`),
         UNIQUE KEY `unique_email` (`email`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -54,7 +56,7 @@ SQL statement to **create the above database and table**:
 You'll also need a **test user**:
 
     mysql> INSERT INTO `users` (username, email, password, roles) VALUES (
-        'test', 'test@test.com', '$2y$10$k5O1HnSI8N0ORJQnMnFpR.Z0.r7nx4Epk0a8J3d/sCdATF0BStBKe', 'ROLE_USER'
+        'test', 'test@test.com', '$2y$10$k5O1HnSI8N0ORJQnMnFpR.Z0.r7nx4Epk0a8J3d/sCdATF0BStBKe', 'ROLE_USER', '1'
     );
 
 You'll also need a **host / vhost** to route everything through.
