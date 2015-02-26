@@ -130,7 +130,7 @@ class Application extends \Silex\Application
         $app->register(new SessionServiceProvider());
         $app->register(new UrlGeneratorServiceProvider());
         $app->register(new TwigServiceProvider(), [
-            'twig.path'    => dirname(dirname(__DIR__)) . '/web/views',
+            'twig.path'    => dirname(dirname(__DIR__)) . '/src/App/views',
             'twig.options' => ['debug' => (($this->config['environment'] === "dev") ? true : false)]
         ]);
 
