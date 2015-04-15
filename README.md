@@ -2,6 +2,8 @@
 
 Annoyed with having to figure out the best code and directory structure for a working Silex skeleton? Well, look no further. This code is a great baseline for all your needs.
 
+**Update (15/04/2015)**: I'm currently re-writing this with the latest Silex (2.x) and Symfony 2 components (2.6.*). Expect a new library popping up in the coming weeks that's much nicer and faster.
+
 ## Features
 
 - Configuration loaded from YAML files, just like in Symfony2
