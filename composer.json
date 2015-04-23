@@ -20,7 +20,7 @@
         "twig/twig": ">=1.8,<2.0-dev",
         "symfony/twig-bridge": "2.3.*",
         "monolog/monolog": "1.6.*@dev",
-        "rdlowrey/auryn": "dev-v1.0.0-dev",
+        "rdlowrey/auryn": "~0.14",
         "ircmaxell/password-compat": "dev-master",
         "dflydev/doctrine-orm-service-provider": "1.0.*@dev",
         "entea/silex-twig-simple-asset-extension": "dev-master"
