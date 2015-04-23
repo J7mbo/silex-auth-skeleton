@@ -16,6 +16,7 @@ use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain,
     Doctrine\Common\Annotations\AnnotationReader,
     Symfony\Component\Console\Helper\HelperSet,
     Doctrine\ORM\Mapping\Driver\DatabaseDriver,
+    Doctrine\ORM\Mapping\Driver\XmlDriver,
     Doctrine\ORM\Tools\Console\Command,
     Doctrine\DBAL\Connection,
     Doctrine\DBAL\Version;
@@ -35,6 +36,9 @@ AnnotationRegistry::registerFile($annotationsFile);
 $driverChain = new MappingDriverChain();
 $driverChain->addDriver(
     new AnnotationDriver(new AnnotationReader(), [dirname(__DIR__) . '/src/App/Model/Entity']), 'App\Model\Entity\\'
+);
+$driverChain->addDriver(
+    new XmlDriver([dirname(__DIR__) . '/src/App/Model/Entity')]), 'App\Model\Entity\\'
 );
 
 $em->getConfiguration()->setMetadataDriverImpl($driverChain);
